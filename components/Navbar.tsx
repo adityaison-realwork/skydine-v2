@@ -23,7 +23,7 @@ const Navbar: React.FC = () => {
   const handleNavigation = (path: string) => {
     setIsOpen(false);
     navigate(path);
-    setHoveredLink(null); // Reset on navigation
+    setHoveredLink(null);
   };
 
   const handleCopyPhone = (e: React.MouseEvent) => {
@@ -35,7 +35,6 @@ const Navbar: React.FC = () => {
     }
   };
 
-  // Determine current image: default to first link's image if none hovered, or specific default
   const defaultImage = 'https://images.unsplash.com/photo-1544148103-0773bf10d330?q=80&w=2070';
   const currentImage = hoveredLink 
     ? links.find(l => l.name === hoveredLink)?.img 
@@ -79,14 +78,12 @@ const Navbar: React.FC = () => {
             animate={{ clipPath: "circle(150% at 100% 0%)" }}
             exit={{ clipPath: "circle(0% at 100% 0%)" }}
             transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
-            className="fixed inset-0 z-[60] bg-void flex flex-col md:flex-row h-[100dvh]"
+            className="fixed inset-0 z-[60] flex flex-col md:flex-row h-[100dvh]"
           >
-            {/* Left Panel: Navigation */}
-            {/* Added a rich gradient background for mobile appeal */}
-            <div className="w-full md:w-1/2 h-full flex flex-col justify-between p-6 md:p-12 relative z-20 overflow-y-auto overflow-x-hidden custom-scrollbar bg-gradient-to-b from-[#1a1a1a] via-[#0d0d0d] to-[#000000] md:bg-none md:bg-void">
+            {/* Left Panel: Navigation with deep stained gradient */}
+            <div className="w-full md:w-1/2 h-full flex flex-col justify-between p-6 md:p-12 relative z-20 overflow-y-auto overflow-x-hidden custom-scrollbar bg-gradient-to-br from-[#1a1a1a] via-[#0d0d0d] to-[#000000]">
               <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03] pointer-events-none"></div>
               
-              {/* Header inside Menu */}
               <div className="flex justify-between items-center flex-shrink-0">
                  <span className="font-sans text-[10px] md:text-xs text-rust uppercase tracking-[0.4em]">Navigation</span>
                  <button 
@@ -97,7 +94,6 @@ const Navbar: React.FC = () => {
                   </button>
               </div>
 
-              {/* Navigation Links */}
               <div className="flex flex-col justify-center gap-2 md:gap-0 lg:gap-1 my-8 md:my-4 flex-grow">
                 {links.map((link, idx) => (
                   <motion.div
@@ -107,7 +103,6 @@ const Navbar: React.FC = () => {
                     transition={{ delay: 0.1 + idx * 0.05, duration: 0.5, ease: "easeOut" }}
                     className="relative group w-fit"
                     onMouseEnter={() => setHoveredLink(link.name)}
-                    // Removed onMouseLeave to keep the image of the last hovered item visible
                   >
                     <button 
                       onClick={() => handleNavigation(link.path)}
@@ -122,10 +117,7 @@ const Navbar: React.FC = () => {
                 ))}
               </div>
 
-              {/* Bottom Info Section */}
               <div className="flex flex-col gap-6 md:gap-0 md:flex-row md:justify-between md:items-end border-t border-cream/10 pt-6 flex-shrink-0">
-                
-                {/* Socials */}
                 <div className="flex gap-6 text-cream/30 font-sans text-xs uppercase tracking-widest">
                   <a href="#" className="hover:text-rust transition-colors flex items-center gap-2 group">
                     <Instagram className="w-4 h-4 group-hover:scale-110 transition-transform"/> <span className="hidden lg:inline">Instagram</span>
@@ -138,7 +130,6 @@ const Navbar: React.FC = () => {
                   </a>
                 </div>
 
-                {/* Contact Copy */}
                 <button 
                   onClick={handleCopyPhone}
                   className="interactive group flex items-center gap-3 text-cream/50 hover:text-rust transition-colors"
@@ -154,7 +145,7 @@ const Navbar: React.FC = () => {
               </div>
             </div>
 
-            {/* Right Panel: Visual */}
+            {/* Right Panel: Visual with Cross-Fade */}
             <div className="hidden md:block w-1/2 h-full relative overflow-hidden bg-charcoal">
                <button 
                   onClick={() => setIsOpen(false)}
@@ -163,31 +154,45 @@ const Navbar: React.FC = () => {
                   <X className="w-6 h-6" />
                </button>
 
-               <AnimatePresence mode="wait">
+               {/* Synchronized Cross-fade for more luxury feel */}
+               <AnimatePresence initial={false}>
                  <motion.div 
                    key={currentImage}
-                   initial={{ scale: 1.1, opacity: 0 }}
-                   animate={{ scale: 1, opacity: 1 }}
+                   initial={{ opacity: 0 }}
+                   animate={{ opacity: 1 }}
                    exit={{ opacity: 0 }}
-                   transition={{ duration: 0.5 }}
+                   transition={{ duration: 0.8, ease: "easeInOut" }}
                    className="absolute inset-0"
                  >
-                   <div className="absolute inset-0 bg-void/30 z-10"></div>
-                   <img 
+                   <div className="absolute inset-0 bg-void/40 z-10"></div>
+                   <motion.img 
                      src={currentImage} 
                      alt="Menu Preview" 
-                     className="w-full h-full object-cover grayscale-[20%]"
+                     className="w-full h-full object-cover grayscale-[15%] brightness-75"
+                     initial={{ scale: 1.1 }}
+                     animate={{ scale: 1 }}
+                     transition={{ duration: 1.2, ease: "easeOut" }}
                    />
                  </motion.div>
                </AnimatePresence>
                
                <div className="absolute bottom-12 right-12 z-20 text-right">
-                  <p className="font-display text-4xl text-cream mb-2">
-                    {hoveredLink || "Sky Dine"}
-                  </p>
-                  <p className="font-sans text-xs text-rust uppercase tracking-[0.4em]">
-                    {hoveredLink ? "Explore Section" : "Welcome"}
-                  </p>
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={hoveredLink}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <p className="font-display text-4xl text-cream mb-2 uppercase tracking-tight">
+                        {hoveredLink || "Sky Dine"}
+                      </p>
+                      <p className="font-sans text-xs text-rust uppercase tracking-[0.4em]">
+                        {hoveredLink ? "Explore Concept" : "Vadodara"}
+                      </p>
+                    </motion.div>
+                  </AnimatePresence>
                </div>
             </div>
           </motion.div>
